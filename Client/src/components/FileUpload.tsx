@@ -20,7 +20,9 @@ const FileUpload: React.FC<FileUploadProps> = ({
 
         try {
           const uploadResponse = await axios.post(
-            `${import.meta.env.VITE_API_URL}/api/pdf/upload`,
+            // `${import.meta.env.VITE_API_URL}/api/pdf/upload`,
+            `https://pdf-lux.vercel.app/api/pdf/upload`,
+
             formData,
             {
               headers: { "Content-Type": "multipart/form-data" }
@@ -28,7 +30,9 @@ const FileUpload: React.FC<FileUploadProps> = ({
           );
 
           const pageCountResponse = await axios.get(
-            `${import.meta.env.VITE_API_URL}/api/pdf/page-count/${uploadResponse.data.filename}`
+            // `${import.meta.env.VITE_API_URL}/api/pdf/page-count/${uploadResponse.data.filename}`
+            `https://pdf-lux.vercel.app/api/pdf/page-count/${uploadResponse.data.filename}`
+
           );
 
           onFileUpload(uploadResponse.data.filename);
