@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { toast } from "react-hot-toast";
 
 interface CreatePDFProps {
   filename: string;
@@ -11,7 +12,7 @@ const CreatePDF: React.FC<CreatePDFProps> = ({ filename, selectedPages }) => {
 
   const handleCreatePDF = async () => {
     if (selectedPages.length === 0) {
-      alert("Please select at least one page to extract.");
+      toast.error("Please select at least one page to extract.");
       return;
     }
 
@@ -19,7 +20,7 @@ const CreatePDF: React.FC<CreatePDFProps> = ({ filename, selectedPages }) => {
 
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/pdf/extract/${filename}`,
+        `${import.meta.env.VITE_API_URL}/api/pdf/extract/${filename}`,
         { selectedPages },
         { responseType: "blob" }
       );
@@ -32,9 +33,10 @@ const CreatePDF: React.FC<CreatePDFProps> = ({ filename, selectedPages }) => {
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
+      toast.success("PDF created successfully!");
     } catch (error) {
       console.error("Error creating PDF:", error);
-      alert("Failed to create PDF. Please try again.");
+      toast.error("Failed to create PDF. Please try again.");
     } finally {
       setIsLoading(false);
     }

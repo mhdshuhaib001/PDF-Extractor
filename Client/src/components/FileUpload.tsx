@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import axios from "axios";
-
+import { toast } from "react-hot-toast";
 interface FileUploadProps {
   onFileUpload: (filename: string) => void;
   setTotalPages: (pages: number) => void;
@@ -20,7 +20,7 @@ const FileUpload: React.FC<FileUploadProps> = ({
 
         try {
           const uploadResponse = await axios.post(
-            "http://localhost:5000/api/pdf/upload",
+            `${import.meta.env.VITE_API_URL}/api/pdf/upload`,
             formData,
             {
               headers: { "Content-Type": "multipart/form-data" }
@@ -28,14 +28,14 @@ const FileUpload: React.FC<FileUploadProps> = ({
           );
 
           const pageCountResponse = await axios.get(
-            `http://localhost:5000/api/pdf/page-count/${uploadResponse.data.filename}`
+            `${import.meta.env.VITE_API_URL}/api/pdf/page-count/${uploadResponse.data.filename}`
           );
 
           onFileUpload(uploadResponse.data.filename);
           setTotalPages(pageCountResponse.data.pageCount);
         } catch (error) {
           console.error("Upload failed:", error);
-          alert("Failed to upload PDF. Please try again.");
+          toast.error("Failed to upload PDF. Please try again.");
         }
       }
     },

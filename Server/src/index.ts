@@ -5,15 +5,17 @@ import { fileURLToPath } from 'url';
 import pdfRoutes from './routes/pdfRoutes';
 import dotenv from 'dotenv';
 
-// Load environment variables
 dotenv.config();
 
+// Set __filename and __dirname for ES module compatibility
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 5000; // Use environment variable for port in production
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+const PORT = process.env.PORT || 5000; 
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173'; // Frontend URL for CORS
+
+// CORS configuration to allow requests from frontend
 
 app.use(cors({
   origin: FRONTEND_URL,
@@ -22,9 +24,9 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Range', 'Accept-Ranges', 'Content-Range'],
   exposedHeaders: ['Content-Range', 'Accept-Ranges']
 }));
-
+// Middleware to parse incoming JSON requests
 app.use(express.json());
-
+// Serve PDF files from the uploads directory
 app.use('/uploads', (req, res, next) => {
   res.set({
     'Access-Control-Allow-Origin': FRONTEND_URL,
@@ -38,6 +40,7 @@ app.use('/uploads', (req, res, next) => {
   next();
 }, express.static(path.join(__dirname, '../uploads')));
 
+// API route for handling PDF-related endpoints
 app.use('/api/pdf', pdfRoutes);
 
 app.listen(PORT, () => {

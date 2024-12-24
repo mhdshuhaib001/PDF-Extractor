@@ -7,6 +7,8 @@ import { PDFDocument } from "pdf-lib";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+
+// Upload PDF and return filename
 export const uploadPdf = async (req: Request, res: Response): Promise<void> => {
   try {
     if (!req.file) {
@@ -27,6 +29,7 @@ export const uploadPdf = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+// Get total page count of PDF
 export const getPageCount = async (req: Request, res: Response): Promise<void> => {
   try {
     const { filename } = req.params;
@@ -49,7 +52,7 @@ export const getPageCount = async (req: Request, res: Response): Promise<void> =
   }
 };
 
-
+// Function to extract specific pages from a PDF
 export const extractPages = async (req: Request, res: Response): Promise<void> => {
   try {
     const { filename } = req.params;
