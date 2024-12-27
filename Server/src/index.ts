@@ -13,7 +13,7 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 5000; 
-const FRONTEND_URL = process.env.FRONTEND_URL ; // Frontend URL for CORS
+const FRONTEND_URL = process.env.FRONTEND_URL || 'https://pdf-lux.vercel.app';
 
 // CORS configuration to allow requests from frontend
 
