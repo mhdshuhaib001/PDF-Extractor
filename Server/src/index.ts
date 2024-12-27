@@ -43,6 +43,7 @@ app.use('/uploads', (req, res, next) => {
 // API route for handling PDF-related endpoints
 app.use('/api/pdf', pdfRoutes);
 
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
