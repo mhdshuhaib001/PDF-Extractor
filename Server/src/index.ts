@@ -13,7 +13,7 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 5000; 
-const FRONTEND_URL = 'https://pdf-lux.vercel.app' ; // Frontend URL for CORS
+const FRONTEND_URL = process.env.FRONTEND_URL ; // Frontend URL for CORS
 
 // CORS configuration to allow requests from frontend
 
@@ -42,9 +42,6 @@ app.use('/uploads', (req, res, next) => {
 
 // API route for handling PDF-related endpoints
 app.use('/api/pdf', pdfRoutes);
-app.get('/api/test', (req, res) => {
-  res.status(200).json({ status: 'working.....' });
-});
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

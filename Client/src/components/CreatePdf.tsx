@@ -20,8 +20,8 @@ const CreatePDF: React.FC<CreatePDFProps> = ({ filename, selectedPages }) => {
 
     try {
       const response = await axios.post(
-        // `${import.meta.env.VITE_API_URL}/api/pdf/extract/${filename}`,
-        `https://pdf-lux.vercel.app/api/pdf/extract/${filename}`,
+        `${import.meta.env.VITE_API_URL}/api/pdf/extract/${filename}`,
+        // `https://pdf-lux.vercel.app/api/pdf/extract/${filename}`,
 
         { selectedPages },
         { responseType: "blob" }
