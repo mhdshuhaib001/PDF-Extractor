@@ -32,5 +32,8 @@
     "pdfjs-dist": "^3.11.174",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2"
+  },
+  "engines": {
+    "node": "20.x"
   }
 }
