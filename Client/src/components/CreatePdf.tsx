@@ -51,7 +51,7 @@ const CreatePDF: React.FC<CreatePDFProps> = ({ filename, selectedPages }) => {
         className={`w-full py-2 px-4 rounded-lg font-medium transition-colors duration-200 ${
           selectedPages.length === 0 || isLoading
             ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-            : "bg-blue-500 text-white hover:bg-blue-600"
+            : "bg-sky-500 text-white hover:bg-sky-300"
         }`}
         onClick={handleCreatePDF}
       >
