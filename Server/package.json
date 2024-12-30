@@ -5,9 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "npx nodemon --watch src --exec tsx ./src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "dev": "npx nodemon --watch src --exec tsx ./src/index.ts"
   },
   "keywords": [],
   "author": "",
@@ -18,7 +18,8 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "multer": "^1.4.5-lts.1",
-    "pdf-lib": "^1.17.1"
+    "pdf-lib": "^1.17.1",
+    "tsx": "^4.19.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
@@ -30,7 +31,6 @@
     "nodemon": "^3.1.9",
     "pdfjs-dist": "^3.11.174",
     "ts-node": "^10.9.2",
-    "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   }
 }
