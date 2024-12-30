@@ -13,7 +13,10 @@
       "skipDefaultLibCheck": true,
       "allowSyntheticDefaultImports": true,
       "allowJs": true,
-      "typeRoots": ["./node_modules/@types", "./src/types"]
+      "typeRoots": [
+        "./node_modules/@types",
+        "./src/types"
+      ]
     },
     "include": [
       "src/**/*.ts"
