@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from 'url';
-import pdfRoutes from './routes/pdfRoutes';
+import pdfRoute from './routes/pdfRoutes';
 import dotenv from 'dotenv';
 dotenv.config();
 // Set __filename and __dirname for ES module compatibility
@@ -35,7 +35,7 @@ app.use('/uploads', (req, res, next) => {
     next();
 }, express.static(path.join(__dirname, '../uploads')));
 // API route for handling PDF-related endpoints
-app.use('/api/pdf', pdfRoutes);
+app.use('/api/pdf', pdfRoute);
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
