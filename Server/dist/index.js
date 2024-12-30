@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from 'url';
-import pdfRoute from './routes/pdfRoutes.js';
+import pdfRoute from './routes/pdfRoutes';
 import dotenv from 'dotenv';
 dotenv.config();
 // Set __filename and __dirname for ES module compatibility
