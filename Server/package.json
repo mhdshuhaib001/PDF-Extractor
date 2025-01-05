@@ -2,13 +2,9 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.js",
-  "type": "module",
+  "main": "index.js",
   "scripts": {
-    "dev": "nodemon src/index.ts",
-    "build": "tsc",
-    "start": "node dist/index.js",
-    "vercel-build": "npm run build"
+    "start": "nodemon src/index.ts"
   },
   "keywords": [],
   "author": "",
@@ -25,7 +21,7 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/multer": "^1.4.12",
-    "@types/node": "^22.10.2",
+    "@types/node": "^22.10.5",
     "@types/pdf-parse": "^1.1.4",
     "@types/pdfjs-dist": "^2.10.378",
     "nodemon": "^3.1.9",

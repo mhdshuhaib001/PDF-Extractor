@@ -6,16 +6,12 @@ import { PDFUseCasesImpl } from './application/use-cases/pdf-use-cases-impl';
 import { FSPDFRepository } from './infrastructure/repositories/pdf-repository';
 import dotenv from 'dotenv';
 import path from 'path';
-import { fileURLToPath } from 'url';
 
 dotenv.config();
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
 const app = express();
 const PORT = process.env.PORT || 5000;
-const FRONTEND_URL = process.env.FRONTEND_URL ;
+const FRONTEND_URL = process.env.FRONTEND_URL;
 
 app.use(cors({
   origin: FRONTEND_URL,

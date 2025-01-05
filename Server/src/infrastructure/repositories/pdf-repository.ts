@@ -3,10 +3,8 @@ import { PDF } from '../../domain/entities/pdf';
 import { PDFDocument } from 'pdf-lib';
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+
 
 export class FSPDFRepository implements PDFRepository {
   private uploadDir: string;
