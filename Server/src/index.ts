@@ -1,21 +1,21 @@
-import express from "express";
-import cors from "cors";
-import path from "path";
-import { fileURLToPath } from 'url';
-import pdfRoute from './routes/pdfRoutes.ts'
+import express from 'express';
+import cors from 'cors';
+import { createPDFRouter } from './interfaces/routes/pdf-routes';
+import { PDFController } from './interfaces/controllers/pdf-controller';
+import { PDFUseCasesImpl } from './application/use-cases/pdf-use-cases-impl';
+import { FSPDFRepository } from './infrastructure/repositories/pdf-repository';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 dotenv.config();
 
-// Set __filename and __dirname for ES module compatibility
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 5000; 
-const FRONTEND_URL = process.env.FRONTEND_URL || 'https://pdf-lux.vercel.app';
-
-// CORS configuration to allow requests from frontend
+const PORT = process.env.PORT || 5000;
+const FRONTEND_URL = process.env.FRONTEND_URL ;
 
 app.use(cors({
   origin: FRONTEND_URL,
@@ -24,9 +24,9 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Range', 'Accept-Ranges', 'Content-Range'],
   exposedHeaders: ['Content-Range', 'Accept-Ranges']
 }));
-// Middleware to parse incoming JSON requests
+
 app.use(express.json());
-// Serve PDF files from the uploads directory
+
 app.use('/uploads', (req, res, next) => {
   res.set({
     'Access-Control-Allow-Origin': FRONTEND_URL,
@@ -40,9 +40,11 @@ app.use('/uploads', (req, res, next) => {
   next();
 }, express.static(path.join(__dirname, '../uploads')));
 
-// API route for handling PDF-related endpoints
-app.use('/api/pdf', pdfRoute);
+const pdfRepository = new FSPDFRepository();
+const pdfUseCases = new PDFUseCasesImpl(pdfRepository);
+const pdfController = new PDFController(pdfUseCases);
 
+app.use('/api/pdf', createPDFRouter(pdfController));
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

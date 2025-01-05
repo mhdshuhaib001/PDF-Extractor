@@ -1,7 +1,8 @@
+
 import { useEffect, useState } from "react";
 import * as pdfjsLib from "pdfjs-dist";
+import { pdfService } from "../services/pdfService";
 import PagePreview from "./PagePreview";
-
 
 interface PageSelectorProps {
   totalPages: number;
@@ -16,10 +17,9 @@ const PageSelector: React.FC<PageSelectorProps> = ({
   onPageSelection,
   filename
 }) => {
-  // const [pdfDocument, setPdfDocument] = useState<any>(null);
   const [pageImages, setPageImages] = useState<{ [key: number]: string }>({});
   const [loading, setLoading] = useState(true);
-  console.log(filename, "the file name");
+  const [selectionOrder, setSelectionOrder] = useState<number[]>([]);
 
   useEffect(() => {
     const loadPDF = async () => {
@@ -27,12 +27,9 @@ const PageSelector: React.FC<PageSelectorProps> = ({
 
       try {
         setLoading(true);
-        const loadingTask = pdfjsLib.getDocument(
-          `http://localhost:5000/uploads/${filename}`
-        );
-        console.log(loadPDF, "this is the thng");
+        const loadingTask = pdfjsLib.getDocument(pdfService.getPDFUrl(filename));
+
         const pdf = await loadingTask.promise;
-        // setPdfDocument(pdf);
         await loadPagePreviews(pdf);
       } catch (error) {
         console.error("Error loading PDF:", error);
@@ -63,18 +60,23 @@ const PageSelector: React.FC<PageSelectorProps> = ({
       }).promise;
   
       images[pageNum] = canvas.toDataURL();
-  
-      setPageImages(prevImages => ({ ...prevImages, [pageNum]: images[pageNum] }))
+      setPageImages(prevImages => ({ ...prevImages, [pageNum]: images[pageNum] }));
     }
   };
-  
 
   const handlePageToggle = (pageNumber: number) => {
-    const updatedSelection = selectedPages.includes(pageNumber)
-      ? selectedPages.filter((page) => page !== pageNumber)
-      : [...selectedPages, pageNumber].sort((a, b) => a - b);
-
-    onPageSelection(updatedSelection);
+    let newOrder: number[];
+    if (selectedPages.includes(pageNumber)) {
+      // Remove the page from selection order
+      newOrder = selectionOrder.filter(num => num !== pageNumber);
+      setSelectionOrder(newOrder);
+    } else {
+      // Add the page to selection order
+      newOrder = [...selectionOrder, pageNumber];
+      setSelectionOrder(newOrder);
+    }
+    
+    onPageSelection(newOrder);
   };
 
   if (loading) {
@@ -90,25 +92,24 @@ const PageSelector: React.FC<PageSelectorProps> = ({
     <div className="mt-6">
       <h2 className="text-lg font-semibold mb-3">Select Pages:</h2>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-          (pageNumber) => (
-            <div
-              key={pageNumber}
-              className={`relative border rounded-lg overflow-hidden cursor-pointer transition-all duration-200 ${
-                selectedPages.includes(pageNumber)
-                  ? "ring-2 ring-blue-500"
-                  : "hover:ring-2 hover:ring-gray-300"
-              }`}
-              onClick={() => handlePageToggle(pageNumber)}
-            >
-              <PagePreview
-                imageUrl={pageImages[pageNumber]}
-                pageNumber={pageNumber}
-                isSelected={selectedPages.includes(pageNumber)}
-              />
-            </div>
-          )
-        )}
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => (
+          <div
+            key={pageNumber}
+            className={`relative border rounded-lg overflow-hidden cursor-pointer transition-all duration-200 ${
+              selectedPages.includes(pageNumber)
+                ? "ring-2 ring-blue-500"
+                : "hover:ring-2 hover:ring-gray-300"
+            }`}
+            onClick={() => handlePageToggle(pageNumber)}
+          >
+            <PagePreview
+              imageUrl={pageImages[pageNumber]}
+              pageNumber={pageNumber}
+              isSelected={selectedPages.includes(pageNumber)}
+              selectionOrder={selectionOrder.indexOf(pageNumber) + 1}
+            />
+          </div>
+        ))}
       </div>
       <div className="mt-4 text-sm text-gray-500">
         Selected: {selectedPages.length} page

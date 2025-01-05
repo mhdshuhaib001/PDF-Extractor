@@ -1,6 +1,8 @@
 import { useState } from "react";
-import axios from "axios";
 import { toast } from "react-hot-toast";
+import { downloadBlob } from "../utils/fileUtils";
+import { pdfService } from "../services/pdfService";
+
 
 interface CreatePDFProps {
   filename: string;
@@ -19,22 +21,8 @@ const CreatePDF: React.FC<CreatePDFProps> = ({ filename, selectedPages }) => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/pdf/extract/${filename}`,
-        // `https://pdf-lux.vercel.app/api/pdf/extract/${filename}`,
-
-        { selectedPages },
-        { responseType: "blob" }
-      );
-
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", "extracted_pages.pdf");
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
+      const blob = await pdfService.extractPages(filename, selectedPages);
+      downloadBlob(blob, "extracted_pages.pdf");
       toast.success("PDF created successfully!");
     } catch (error) {
       console.error("Error creating PDF:", error);
