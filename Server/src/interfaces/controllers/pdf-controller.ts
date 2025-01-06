@@ -11,12 +11,16 @@ export class PDFController {
         res.status(HttpStatus.BAD_REQUEST).json({ message: "No file uploaded" });
         return;
       }
-
+  
       const pdf = await this.pdfUseCases.uploadPDF(req.file);
+      
+      const filename = req.file.filename || req.file.path.split('/').pop();
+      
       res.status(HttpStatus.OK).json({
         success: true,
         message: "File uploaded successfully",
-        filename: pdf.filename
+        filename: filename,
+        url: req.file.path
       });
     } catch (error) {
       console.error("Upload error:", error);
@@ -26,7 +30,6 @@ export class PDFController {
       });
     }
   }
-
   async getPageCount(req: Request, res: Response): Promise<void> {
     try {
       const { filename } = req.params;

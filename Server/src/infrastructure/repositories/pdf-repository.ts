@@ -1,24 +1,14 @@
 import { PDFRepository } from '../../domain/repositories/pdf-repository.interface';
 import { PDF } from '../../domain/entities/pdf';
 import { PDFDocument } from 'pdf-lib';
-import fs from 'fs';
-import path from 'path';
-
-
+import { v2 as cloudinary } from 'cloudinary';
+import axios from 'axios';
 
 export class FSPDFRepository implements PDFRepository {
-  private uploadDir: string;
-
-  constructor() {
-    this.uploadDir = path.join(__dirname, '..', '..', '..', 'uploads');
-    if (!fs.existsSync(this.uploadDir)) {
-      fs.mkdirSync(this.uploadDir, { recursive: true });
-    }
-  }
-
   async save(file: Express.Multer.File): Promise<PDF> {
-    const pdfBytes = fs.readFileSync(file.path);
-    const pdfDoc = await PDFDocument.load(pdfBytes);
+    // File is already uploaded to Cloudinary by multer
+    const pdfBuffer = await axios.get(file.path, { responseType: 'arraybuffer' });
+    const pdfDoc = await PDFDocument.load(pdfBuffer.data);
     
     return {
       filename: file.filename,
@@ -28,20 +18,24 @@ export class FSPDFRepository implements PDFRepository {
   }
 
   async findByFilename(filename: string): Promise<PDF> {
-    const filePath = path.join(this.uploadDir, filename);
-    if (!fs.existsSync(filePath)) {
-      throw new Error('File not found');
+    const cleanFilename = filename.replace('pdfs/', '');
+    const url = this.getFileUrl(cleanFilename);
+    
+    try {
+      const pdfBuffer = await axios.get(url, { responseType: 'arraybuffer' });
+      const pdfDoc = await PDFDocument.load(pdfBuffer.data);
+
+      return {
+        filename: cleanFilename,
+        path: url,
+        pageCount: pdfDoc.getPageCount()
+      };
+    } catch (error) {
+      console.error('Error finding PDF:', error);
+      throw new Error('PDF not found or inaccessible');
     }
-
-    const pdfBytes = fs.readFileSync(filePath);
-    const pdfDoc = await PDFDocument.load(pdfBytes);
-
-    return {
-      filename,
-      path: filePath,
-      pageCount: pdfDoc.getPageCount()
-    };
   }
+
 
   async getPageCount(filename: string): Promise<number> {
     const pdf = await this.findByFilename(filename);
@@ -49,9 +43,9 @@ export class FSPDFRepository implements PDFRepository {
   }
 
   async extractPages(filename: string, selectedPages: number[]): Promise<Buffer> {
-    const filePath = path.join(this.uploadDir, filename);
-    const pdfBytes = fs.readFileSync(filePath);
-    const pdfDoc = await PDFDocument.load(pdfBytes);
+    const url = this.getFileUrl(filename);
+    const pdfBuffer = await axios.get(url, { responseType: 'arraybuffer' });
+    const pdfDoc = await PDFDocument.load(pdfBuffer.data);
     const newPdfDoc = await PDFDocument.create();
 
     for (const pageNumber of selectedPages) {
@@ -60,5 +54,9 @@ export class FSPDFRepository implements PDFRepository {
     }
 
     return Buffer.from(await newPdfDoc.save());
+  }
+
+  private getFileUrl(filename: string): string {
+    return `https://res.cloudinary.com/${process.env.CLOUDINARY_CLOUD_NAME}/raw/upload/pdfs/${filename}`;
   }
 }

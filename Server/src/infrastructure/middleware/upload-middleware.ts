@@ -1,27 +1,38 @@
-import multer from 'multer';
-import path from 'path';
+import { v2 as cloudinary } from "cloudinary";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import multer from "multer";
 
-
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '..', '..', '..', 'uploads'));
-  },
-  filename: (req, file, cb) => {
-    cb(null, `pdf-${Date.now()}${path.extname(file.originalname)}`);
-  }
+// Configure Cloudinary
+// cloudinary.config({
+//   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+//   api_key: process.env.CLOUDINARY_API_KEY,
+//   api_secret: process.env.CLOUDINARY_API_SECRET
+// });
+cloudinary.config({
+  cloud_name: "dnk12xdah",
+  api_key: "428451257654476",
+  api_secret: "WNgUNihw3EJ2DJjh3mect8AfEJs"
 });
 
-const fileFilter = (req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
-  if (file.mimetype === 'application/pdf') {
-    cb(null, true);
-  } else {
-    cb(new Error('Invalid file type. Only PDFs are allowed.'));
-  }
-};
+// Configure Cloudinary storage
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "pdfs",
+    resource_type: "raw",
+    allowed_formats: ["pdf"]
+  } as any
+});
 
+// Create multer upload middleware
 export const upload = multer({
   storage,
-  fileFilter,
-  limits: { fileSize: 10 * 1024 * 1024 }
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype === "application/pdf") {
+      cb(null, true);
+    } else {
+      cb(new Error("Invalid file type. Only PDFs are allowed."));
+    }
+  }
 });
