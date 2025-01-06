@@ -1,4 +1,4 @@
-import axiosInstance from '../lib/axios';
+import axiosInstance from "../lib/axios";
 
 export interface UploadResponse {
   filename: string;
@@ -16,7 +16,7 @@ export const pdfService = {
     const formData = new FormData();
     formData.append("pdf", file);
     const response = await axiosInstance.post<UploadResponse>(
-      '/api/pdf/upload',
+      "/api/pdf/upload",
       formData,
       {
         headers: { "Content-Type": "multipart/form-data" }
@@ -27,16 +27,19 @@ export const pdfService = {
 
   async getPageCount(filename: string): Promise<PageCountResponse> {
     // Remove the 'pdfs/' prefix if it exists
-    const cleanFilename = filename.replace('pdfs/', '');
+    const cleanFilename = filename.replace("pdfs/", "");
     const response = await axiosInstance.get<PageCountResponse>(
       `/api/pdf/page-count/${cleanFilename}`
     );
-    return response.data;
+    console.log(response.data);
+    return {
+      pageCount: response.data.pageCount
+    };
   },
 
   async extractPages(filename: string, selectedPages: number[]): Promise<Blob> {
     // Remove the 'pdfs/' prefix if it exists
-    const cleanFilename = filename.replace('pdfs/', '');
+    const cleanFilename = filename.replace("pdfs/", "");
     const response = await axiosInstance.post(
       `/api/pdf/extract/${cleanFilename}`,
       { selectedPages },
@@ -46,8 +49,10 @@ export const pdfService = {
   },
 
   getPDFUrl(filename: string): string {
-    const cleanFilename = filename.replace(/^pdfs\//, '');
+    const cleanFilename = filename.replace(/^pdfs\//, "");
 
-    return `https://res.cloudinary.com/${import.meta.env.VITE_PUBLIC_CLOUDINARY_CLOUD_NAME}/raw/upload/pdfs/${cleanFilename}`;
+    return `https://res.cloudinary.com/${
+      import.meta.env.VITE_PUBLIC_CLOUDINARY_CLOUD_NAME
+    }/raw/upload/pdfs/${cleanFilename}`;
   }
 };

@@ -34,6 +34,7 @@ export class PDFController {
     try {
       const { filename } = req.params;
       const pageCount = await this.pdfUseCases.getPageCount(filename);
+      console.log('pageCount------------',pageCount)
       res.status(HttpStatus.OK).json({ pageCount });
     } catch (error) {
       console.error("Error getting PDF page count:", error);
