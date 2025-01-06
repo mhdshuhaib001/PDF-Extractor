@@ -8,11 +8,7 @@ export const createPDFRouter = (pdfController: PDFController) => {
   router.post('/upload', upload.single('pdf'), (req, res) => pdfController.uploadPdf(req, res));
   router.get('/page-count/:filename', (req, res) => pdfController.getPageCount(req, res));
   router.post('/extract/:filename', (req, res) => pdfController.extractPages(req, res));
-<<<<<<< HEAD
-  router.get('/test', (req, res) => {
-=======
   router.get('/   ', (req, res) => {
->>>>>>> 6839c46 (Initial commit after re-initializing)
     res.json({ 
       message: 'Test endpoint working!',
       cors: 'CORS is properly configured if you see this message',
