@@ -7,11 +7,16 @@ import { FSPDFRepository } from './infrastructure/repositories/pdf-repository';
 import dotenv from 'dotenv';
 import path from 'path';
 
-dotenv.config();
+dotenv.config({ path: path.join(__dirname, '../.env') });
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 const FRONTEND_URL = process.env.FRONTEND_URL;
+console.log('Cloudinary config:', {
+  cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+  hasSecret: !!process.env.CLOUDINARY_API_SECRET,
+  hasKey: !!process.env.CLOUDINARY_API_KEY
+});
 
 app.use(cors({
   origin: FRONTEND_URL,

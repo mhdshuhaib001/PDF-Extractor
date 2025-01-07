@@ -10,7 +10,6 @@ export const createPDFRouter = (pdfController: PDFController) => {
   router.post('/extract/:filename', (req, res) => pdfController.extractPages(req, res));
   router.get('/test', (req, res) => {
     try {
-      // Test Cloudinary configuration
       const cloudinaryConfig = {
         cloudName: process.env.CLOUDINARY_CLOUD_NAME,
         hasApiKey: !!process.env.CLOUDINARY_API_KEY,

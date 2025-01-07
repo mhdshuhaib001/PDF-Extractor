@@ -22,6 +22,8 @@ export const pdfService = {
         headers: { "Content-Type": "multipart/form-data" }
       }
     );
+
+    console.log(response,'this is the frontend response')
     return response.data;
   },
 

@@ -13,9 +13,9 @@ export class PDFController {
       }
   
       const pdf = await this.pdfUseCases.uploadPDF(req.file);
-      
+      console.log(pdf,'this is the main area checking what is on here')
       const filename = req.file.filename || req.file.path.split('/').pop();
-      
+      console.log(filename,'this is the file name ')
       res.status(HttpStatus.OK).json({
         success: true,
         message: "File uploaded successfully",
