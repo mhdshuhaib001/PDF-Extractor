@@ -8,6 +8,13 @@ import multer from "multer";
 //   api_key: process.env.CLOUDINARY_API_KEY,
 //   api_secret: process.env.CLOUDINARY_API_SECRET
 // });
+
+console.log('Cloudinary config:', {
+  cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+  hasSecret: !!process.env.CLOUDINARY_API_SECRET,
+  hasKey: !!process.env.CLOUDINARY_API_KEY
+});
+
 cloudinary.config({
   cloud_name: "dnk12xdah",
   api_key: "428451257654476",

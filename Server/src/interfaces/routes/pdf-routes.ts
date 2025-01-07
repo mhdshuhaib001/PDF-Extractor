@@ -8,12 +8,28 @@ export const createPDFRouter = (pdfController: PDFController) => {
   router.post('/upload', upload.single('pdf'), (req, res) => pdfController.uploadPdf(req, res));
   router.get('/page-count/:filename', (req, res) => pdfController.getPageCount(req, res));
   router.post('/extract/:filename', (req, res) => pdfController.extractPages(req, res));
-  router.get('/   ', (req, res) => {
-    res.json({ 
-      message: 'Test endpoint working!',
-      cors: 'CORS is properly configured if you see this message',
-      timestamp: new Date().toISOString()
-    });
+  router.get('/test', (req, res) => {
+    try {
+      // Test Cloudinary configuration
+      const cloudinaryConfig = {
+        cloudName: process.env.CLOUDINARY_CLOUD_NAME,
+        hasApiKey: !!process.env.CLOUDINARY_API_KEY,
+        hasApiSecret: !!process.env.CLOUDINARY_API_SECRET
+      };
+  
+      res.json({ 
+        status: 'success',
+        message: 'Backend is working correctly',
+        environment: process.env.NODE_ENV,
+        timestamp: new Date().toISOString(),
+        cloudinaryConfig
+      });
+    } catch (error) {
+      res.status(500).json({
+        status: 'error',
+        message: 'Backend test failed',
+      });
+    }
   });
 
   return router;

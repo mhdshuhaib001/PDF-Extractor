@@ -80,39 +80,39 @@ const FileUpload: React.FC<FileUploadProps> = ({
 
 
   // FileUpload.tsx
-const onDrop = useCallback(
-  async (acceptedFiles: File[], rejectedFiles: any[]) => {
-    if (rejectedFiles.length > 0) {
-      handleRejectedFiles(rejectedFiles);
-      return;
-    }
-
-    const file = acceptedFiles[0];
-    if (file) {
-      if (!validateFile(file)) return;
-
-      try {
-        const uploadResponse = await pdfService.uploadPDF(file);
-        if (uploadResponse.success) {
-          // Use the clean filename
-          const filename = uploadResponse.filename;
-          const pageCountResponse = await pdfService.getPageCount(filename);
-
-          onFileUpload(filename);
+  const onDrop = useCallback(
+    async (acceptedFiles: File[], rejectedFiles: any[]) => {
+      if (rejectedFiles.length > 0) {
+        handleRejectedFiles(rejectedFiles);
+        return;
+      }
+  
+      const file = acceptedFiles[0];
+      if (file) {
+        if (!validateFile(file)) return;
+  
+        try {
+          const uploadResponse = await pdfService.uploadPDF(file);
+          if (!uploadResponse?.filename) {
+            throw new Error('No filename received from upload');
+          }
+  
+          const pageCountResponse = await pdfService.getPageCount(uploadResponse.filename);
+          if (!pageCountResponse?.pageCount) {
+            throw new Error('Invalid page count response');
+          }
+  
+          onFileUpload(uploadResponse.filename);
           setTotalPages(pageCountResponse.pageCount);
           toast.success('File uploaded successfully');
-        } else {
-          toast.error(uploadResponse.message || 'Upload failed');
+        } catch (error: any) {
+          console.error("Upload failed:", error);
+          toast.error('Failed to process PDF. Please try again.');
         }
-      } catch (error: any) {
-        console.error("Upload failed:", error);
-        const errorMessage = error.response?.data?.message || 'Failed to upload PDF. Please try again.';
-        toast.error(errorMessage);
       }
-    }
-  },
-  [onFileUpload, setTotalPages]
-);
+    },
+    [onFileUpload, setTotalPages]
+  );
 
   const { getRootProps, getInputProps, isDragActive, isDragReject } =
     useDropzone({
